@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import type { ApiResponse } from '@/types/user'
 
 const request = axios.create({
-  baseURL: 'http://localhost:8080',
+  baseURL: 'https://web-production-36c2e.up.railway.app',
   timeout: 30000,
 })
 
