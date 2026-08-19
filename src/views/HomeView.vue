@@ -38,8 +38,8 @@ function toggleSelect(id: number) {
 
 function handleSelectAll() {
   selectedIds.clear()
-  for (let i = 0; i < allData.length; i++) {
-    selectedIds.add(allData[i].id)
+  for (const item of allData) {
+    selectedIds.add(item.id)
   }
   triggerUI()
 }
