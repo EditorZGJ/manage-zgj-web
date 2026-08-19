@@ -2,12 +2,14 @@
 import { onMounted, ref, watch } from 'vue'
 import { ElMessage, ElMessageBox } from 'element-plus'
 import { useUserStore } from '@/stores/user'
+import { useAuthStore } from '@/stores/auth'
 import { deleteUser, recoverUser, exportUsers, downloadTemplate, downloadBlob } from '@/api/user'
 import UserDialog from '@/components/UserDialog.vue'
 import UserImportDialog from '@/components/UserImportDialog.vue'
 import type { User } from '@/types/user'
 
 const userStore = useUserStore()
+const authStore = useAuthStore()
 
 // 搜索
 const searchName = ref('')
@@ -119,6 +121,18 @@ function handleImportSuccess() {
   userStore.fetchUsers()
 }
 
+// 退出登录
+function handleLogout() {
+  authStore.logout()
+  window.location.href = '/login'
+}
+
+// 格式化时间
+function formatTime(time: string | undefined) {
+  if (!time) return '-'
+  return time.replace('T', ' ')
+}
+
 // 初始化
 onMounted(() => {
   userStore.fetchUsers()
@@ -141,10 +155,12 @@ onMounted(() => {
         <el-button @click="handleReset">重置</el-button>
       </div>
       <div class="toolbar-right">
+        <span class="user-info">欢迎，{{ authStore.username }}</span>
         <el-button type="primary" @click="openAddDialog">新增用户</el-button>
         <el-button @click="importDialogVisible = true">导入</el-button>
         <el-button @click="handleExport">导出</el-button>
         <el-button @click="handleDownloadTemplate">下载模板</el-button>
+        <el-button type="danger" plain @click="handleLogout">退出登录</el-button>
       </div>
     </div>
 
@@ -160,7 +176,17 @@ onMounted(() => {
       <el-table-column prop="id" label="ID" width="80" />
       <el-table-column prop="name" label="姓名" width="150" />
       <el-table-column prop="age" label="年龄" width="80" />
-      <el-table-column prop="email" label="邮箱" min-width="200" />
+      <el-table-column prop="email" label="邮箱" min-width="180" />
+      <el-table-column label="创建时间" width="170">
+        <template #default="{ row }">
+          {{ formatTime(row.createTime) }}
+        </template>
+      </el-table-column>
+      <el-table-column label="更新时间" width="170">
+        <template #default="{ row }">
+          {{ formatTime(row.updateTime) }}
+        </template>
+      </el-table-column>
       <el-table-column label="操作" width="200" fixed="right">
         <template #default="{ row }">
           <el-button size="small" type="primary" link @click="openEditDialog(row)">
@@ -232,6 +258,13 @@ onMounted(() => {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.user-info {
+  font-size: 14px;
+  color: #606266;
+  margin-right: 8px;
+  white-space: nowrap;
 }
 
 .pagination-wrapper {

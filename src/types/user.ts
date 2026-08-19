@@ -4,6 +4,8 @@ export interface User {
   name: string
   age: number
   email: string
+  createTime?: string
+  updateTime?: string
 }
 
 /** 分页结果 */
