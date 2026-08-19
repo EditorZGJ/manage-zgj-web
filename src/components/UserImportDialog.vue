@@ -89,10 +89,24 @@ async function handleDownloadTemplate() {
 
 // 自定义上传
 const uploadRef = ref()
-async function handleCustomUpload(param: { file: File }) {
+const selectedFile = ref<File | null>(null)
+
+function handleFileChange(uploadFile: { raw: File; status?: string }) {
+  if (uploadFile.status === 'removed') {
+    selectedFile.value = null
+  } else {
+    selectedFile.value = uploadFile.raw
+  }
+}
+
+async function handleStartImport() {
+  if (!selectedFile.value) {
+    ElMessage.warning('请先选择文件')
+    return
+  }
   uploading.value = true
   try {
-    const res = await importUsers(param.file)
+    const res = await importUsers(selectedFile.value)
     handleUploadSuccess(res.data)
   } catch {
     handleUploadError()
@@ -118,7 +132,7 @@ async function handleCustomUpload(param: { file: File }) {
         :auto-upload="false"
         :show-file-list="true"
         :limit="1"
-        :http-request="handleCustomUpload"
+        @change="handleFileChange"
       >
         <el-icon class="el-icon--upload" :size="48">
           <upload-filled />
@@ -132,9 +146,17 @@ async function handleCustomUpload(param: { file: File }) {
           </div>
         </template>
       </el-upload>
-      <div style="margin-top: 12px; text-align: center">
+      <div style="margin-top: 12px; display: flex; justify-content: center; gap: 8px">
         <el-button size="small" @click="handleDownloadTemplate">
           下载导入模板
+        </el-button>
+        <el-button
+          type="primary"
+          size="small"
+          :disabled="!selectedFile"
+          @click="handleStartImport"
+        >
+          开始导入
         </el-button>
       </div>
     </template>
@@ -163,7 +185,7 @@ async function handleCustomUpload(param: { file: File }) {
     </template>
 
     <template #footer>
-      <el-button :disabled="polling" @click="dialogVisible = false">
+      <el-button :disabled="uploading || polling" @click="dialogVisible = false">
         关闭
       </el-button>
     </template>
