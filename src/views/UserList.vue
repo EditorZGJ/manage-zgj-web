@@ -122,8 +122,8 @@ function handleImportSuccess() {
 }
 
 // 退出登录
-function handleLogout() {
-  authStore.logout()
+async function handleLogout() {
+  await authStore.logout()
   window.location.href = '/login'
 }
 

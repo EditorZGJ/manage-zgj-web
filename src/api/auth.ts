@@ -15,3 +15,9 @@ export function register(data: { username: string; password: string }) {
 export function login(data: { username: string; password: string }) {
   return request.post<ApiResponse<LoginResult>>('/auth/login', data)
 }
+
+/** 退出登录 */
+
+export function logout() {
+  return request.post<ApiResponse<null>>('/auth/logout')
+}

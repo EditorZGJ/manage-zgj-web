@@ -1,7 +1,7 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { ElMessage } from 'element-plus'
-import { login as loginApi, register as registerApi } from '@/api/auth'
+import { login as loginApi, register as registerApi, logout as logoutApi } from '@/api/auth'
 import type { LoginResult } from '@/api/auth'
 
 export const useAuthStore = defineStore('auth', () => {
@@ -28,7 +28,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   /** 退出登录 */
-  function logout() {
+  async function logout() {
+    try {
+      await logoutApi()
+    } catch {
+      // 即使 API 失败也清除本地状态
+    }
     token.value = ''
     username.value = ''
     localStorage.removeItem('token')
