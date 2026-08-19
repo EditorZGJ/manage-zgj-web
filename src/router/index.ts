@@ -34,4 +34,11 @@ router.beforeEach((to, _from, next) => {
   }
 })
 
+// 捕获动态导入失败（部署后 chunk 哈希变化），自动刷新页面
+router.onError((error) => {
+  if (error.message?.includes('Failed to fetch dynamically imported module')) {
+    window.location.reload()
+  }
+})
+
 export default router
