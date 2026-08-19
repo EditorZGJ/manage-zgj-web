@@ -10,6 +10,10 @@ const request = axios.create({
 // 响应拦截器：统一解包 & 错误提示
 request.interceptors.response.use(
   (response) => {
+    // 二进制响应（导出/下载模板）直接返回，不做 JSON 解包
+    if (response.config.responseType === 'blob') {
+      return response
+    }
     const res = response.data as ApiResponse
     if (res.code !== 200) {
       ElMessage.error(res.message || '请求失败')
