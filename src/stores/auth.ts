@@ -29,11 +29,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   /** 退出登录 */
   async function logout() {
-    try {
-      await logoutApi()
-    } catch {
-      // 即使 API 失败也清除本地状态
-    }
+    await logoutApi()
     token.value = ''
     username.value = ''
     localStorage.removeItem('token')

@@ -123,8 +123,12 @@ function handleImportSuccess() {
 
 // 退出登录
 async function handleLogout() {
-  await authStore.logout()
-  window.location.href = '/login'
+  try {
+    await authStore.logout()
+    window.location.href = '/login'
+  } catch {
+    // 错误已在拦截器中提示，不退出
+  }
 }
 
 // 格式化时间
