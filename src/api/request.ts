@@ -24,7 +24,7 @@ request.interceptors.response.use(
   async (response) => {
     // 二进制响应（导出/下载模板）：需要检查是否为 JSON 错误
     if (response.config.responseType === 'blob') {
-      const contentType = response.headers['content-type'] || ''
+      const contentType = String(response.headers['content-type'] || '')
       if (contentType.includes('application/json')) {
         // 后端返回了 JSON 错误（如未登录），读取并解析
         const text = await response.data.text()
